@@ -191,7 +191,7 @@ namespace CMSys.UI.Controllers
             var courseTrainer = _context.CourseTrainerRepository.Filter(x => x.TrainerId == id).FirstOrDefault();
             _context.CourseTrainerRepository.Remove(courseTrainer);
             _context.Commit();
-            //
+            //path to the url of the view (trainers update)
             return Redirect($"/admin/courses/trainers/{courseTrainer.CourseId}");
         }
         private CoursesViewModel GetCoursesViewModel(int page, int perPage, string courseTypeName)
