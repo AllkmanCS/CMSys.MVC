@@ -1,0 +1,60 @@
+﻿@model UsersViewModel
+@{
+    ViewData["Title"] = "Users";
+}
+<div class="container">
+    <h3>Users</h3>
+    <div class="w3-show-inline-block">
+        <div>
+            @if (Model.CanPrevious)
+            {
+                <a href="/admin/users/?@Model.PreviousPageNumber" class="w3-button">&laquo;</a>
+            }
+            @foreach (var item in Model.Pagination)
+            {
+                <a href="/admin/users/?@item" class="w3-button" onclick="location.href ='@Url.Action("IndexUsers", "Account")'">@item</a>
+            }
+            @if (Model.CanNext)
+            {
+                <a href="/admin/users/?@Model.NextPageNumber" class="w3-button">&raquo</a>
+            }
+        </div>
+        <div>
+            <input type="text" placeholder="Search for ..." />
+        </div>
+    </div>
+    <div>
+        <table>
+            <tr class="w3-border-bottom w3-margin" style="border-bottom:medium;">
+                <th>Name</th>
+                <th>Department</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Active?</th>
+                <th>Action</th>
+            </tr>
+            @foreach (var user in Model.Items)
+            {
+                <tr>
+                    <td>@user.FullName</td>
+                    <td>@user.Department</td>
+                    <td>@user.Position</td>
+                    <td>@user.Location</td>
+                    <td>@user.EndDate</td>
+                    <td>
+                        <div class="w3-cell-row">
+                            <button class="w3-border-blue w3-round-large w3-white">
+                                <i class="bi bi-info w3-text-blue"></i>
+                            </button>
+                            <button class="w3-border-yellow w3-round-large w3-white">
+                                <i class="bi bi-pencil-fill w3-text-yellow"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+    <div>
+    </div>
+</div>

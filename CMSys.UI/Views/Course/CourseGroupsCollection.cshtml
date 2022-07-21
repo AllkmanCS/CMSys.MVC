@@ -1,0 +1,39 @@
+﻿@model List<CourseGroupViewModel>
+@{
+    ViewData["Title"] = "Courses Groups";
+
+}
+<div class="w3-container w3-white w3-margin">
+    <table>
+        <tr class="w3-border-bottom w3-margin" style="border-bottom:medium;">
+            <th>Name</th>
+            <th>Description</th>
+            <th>Order</th>
+            <th>Action</th>
+        </tr>
+        @foreach (var course in Model)
+        {
+            <tr class="w3-border-bottom">
+                <td>
+                    <p>@course.Name</p>
+                </td>
+                <td>
+                    <p>@course.Description</p>
+                </td>
+                <td>
+                    <p>@course.VisualOrder</p>
+                </td>
+                <td>
+                    <div class="w3-cell-row">
+                        <button class="w3-border-yellow w3-round-large w3-white">
+                            <i class="bi bi-pencil-fill w3-text-yellow"></i>
+                        </button>
+                        <button class="w3-border-red w3-round-large w3-white">
+                            <i class="bi bi-trash-fill w3-text-red"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

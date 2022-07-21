@@ -1,0 +1,49 @@
+﻿@using CMSys.UI.ViewModels
+@model CourseViewModel
+
+@{
+    <h4>@Model.Name</h4>
+    <div class="w3-bar">
+        <button class="w3-button w3-small w3-round-large w3-green">@Model.CourseType.Name</button>
+        <button class="w3-button w3-small w3-round-large w3-grey">@Model.CourseGroup.Name</button>
+    </div>
+    <p>@Model.Description</p>
+
+    <p>Trainers: </p>
+    <!-- Button trigger modal -->
+    <div>
+        @foreach (var item in Model.Trainers)
+        {
+            //refactor and place it in Shared model to act as a template component
+            <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#trainers-@item.TrainerId">
+                <p class="text-primary"><b>@item.Trainer.User.FullName</b></p>
+            </button>
+
+            <div class="modal fade" id="trainers-@item.TrainerId" tabindex="-1" aria-labelledby="trainerName" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" id="trainerName">@item.Trainer.User.FullName</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                <img src="@Url.Content($"~/img/{@item.Trainer.User.FullName}.png")">
+                            </div>
+                            <p>@item.Trainer.Description</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <a href="./" class="w3-text-blue">Back to list</a>
+
+
+
+}
+
+

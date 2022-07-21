@@ -1,0 +1,43 @@
+﻿@model CourseViewModel
+
+@{
+    ViewData["Title"] = "Update Course";
+}
+<div class="container">
+    <h1>Update Course</h1>
+    <div class="shadow p-3 mb-5 bg-white rounded">
+        <form method="post">
+            <input type="hidden" asp-for="Id"/>
+            <DataAnnotationsValidator />
+            <div class="mb-3">
+            <label asp-for="Name">Name</label></br>
+            <input asp-for="Name" required/><br />
+            </div>
+            <div class="mb-3">
+            <input asp-for="IsNew" />
+            <label asp-for="IsNew">Is New</label></br>
+            </div>
+            <div class="mb-3">
+            <label asp-for="CourseGroup">Course Group</label></br>
+            <select required asp-for="CourseGroup.Id" asp-items="@Model.CourseGroups" value="-- Select Course Group --" class="w3-padding" ></br>
+            </select>
+            </div>
+            <div class="mb-3">
+            <label asp-for="CourseType">Course Type</label></br>
+            <select required asp-for="CourseType.Id" asp-items="@Model.CourseTypes"  value="-- Select Course Type --" class="w3-padding" ></br>
+            </select>
+            </div>
+            <div class="mb-3">
+            <label asp-for="VisualOrder">Order</label></br>
+            <input required asp-for="VisualOrder" /></br>
+            </div>
+            <div class="mb-3">
+            <label asp-for="Description">Description</label></br>
+            <textarea asp-for="Description">Course description</textarea></br>
+            </div>
+            
+            <button type="submit" >Update</button>
+        </form>
+    </div>
+<a href="./" class="w3-text-blue w3-button">Back to list</a>
+</div>

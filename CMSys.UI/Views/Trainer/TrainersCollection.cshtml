@@ -1,0 +1,35 @@
+﻿@model List<TrainerViewModel>
+@{
+    ViewData["Title"] = "Trainer List";
+}
+<div class="w3-container">
+    <h1>Trainer</h1>
+    <div>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Group</th>
+                <th>Order</th>
+                <th>Action</th>
+            </tr>
+            @foreach (var trainer in Model)
+            {
+                <tr>
+                    <td>@trainer.User.FullName</td>
+                    <td>@trainer.TrainerGroup.Name</td>
+                    <td>@trainer.VisualOrder</td>
+                    <td>
+                        <div class="w3-cell-row">
+                            <button class="w3-border-yellow w3-round-large w3-white">
+                                <i class="bi bi-pencil-fill w3-text-yellow"></i>
+                            </button>
+                            <button class="w3-border-red w3-round-large w3-white">
+                                <i class="bi bi-trash-fill w3-text-red"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

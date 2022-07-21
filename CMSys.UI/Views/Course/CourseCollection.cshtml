@@ -1,0 +1,110 @@
+﻿@using CMSys.UI.ViewModels
+@model CoursesViewModel
+@{
+    ViewData["Title"] = "Courses Page";
+}
+<div class="w3-display-container">
+    <div class="w3-row">
+
+    <h3>Courses</h3>
+    <a class="btn btn-primary" asp-controller="Course" asp-action="CourseForm">Create Course</a>
+    </div>
+    <div class="w3-show-inline-block w3-border w3-round">
+        <div class="w3-bar w3-white w3-border w3-round">
+            @if (Model.CanPrevious)
+            {
+                <a href="/admin/courses/?@Model.PreviousPageNumber" class="w3-button">&laquo;</a>
+            }
+            @foreach (var item in Model.Pagination)
+            {
+                <a href="/admin/courses/?@item" class="w3-button">@item</a>
+            }
+            @if (Model.CanNext)
+            {
+                <a href="/admin/courses/?@Model.NextPageNumber" class="w3-button">&raquo</a>
+            }
+        </div>
+        <div class="w3-row">
+            <form asp-controller="Course" asp-action="CourseCollection">
+                <select asp-for="CourseViewModel.Id" asp-items="@Model.CourseTypes" class="w3-padding">
+                    <option>Select Course Type</option>
+                </select>
+            </form>
+            <form asp-controller="Course" asp-action="CourseCollection">
+                <select asp-for="CourseViewModel.Id" asp-items="@Model.CourseGroups" class="w3-padding">
+                    <option>Select Course Group</option>
+                </select>
+            </form>
+        </div>
+        <div class="w3-container w3-white">
+            <table>
+                <tr class="w3-border-bottom w3-margin" style="border-bottom:medium;">
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Group</th>
+                    <th>Trainers</th>
+                    <th>Action</th>
+                </tr>
+
+                @foreach (var course in Model.Items)
+                {
+                    <tr class="w3-border-bottom">
+
+                        <td class=" w3-margin-top">
+                            <p><b>@course.Name</b></p>
+                        </td>
+                        <td>
+                            <div class="w3-bar">
+                                <p>@course.CourseType.Name</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="w3-bar">
+                                <p>@course.CourseGroup.Name</p>
+                            </div>
+                        </td>
+                        <td rowspan="2">
+                            <ul >
+                                @foreach (var trainer in course.Trainers)
+                                {
+                                <li class="w3-text-blue-gray" style=" list-style-type:none;">
+                                    @trainer.Trainer.User.FullName
+                                </li>
+                                    
+                                }
+                            </ul>
+                        </td>
+                        <td rowspan="2">
+                            <div class="w3-cell-row">
+                                <button class="w3-border-blue w3-round-large w3-white">
+                                    <i class="bi bi-info w3-text-blue"></i>
+                                </button>
+                                <a asp-controller="Course" asp-action="Update" 
+                                asp-route-id="@course.Id"
+                                class="w3-border-yellow w3-round-large w3-white">
+                                    <i class="bi bi-pencil-fill w3-text-yellow"></i>
+                                </a>
+                                <button class="w3-border-yellow w3-round-large w3-white">
+                                    <a asp-controller="Course" asp-action="Trainers"
+                                    asp-route-id="@course.Id">
+                                    <i class="bi bi-people-fill  w3-text-yellow"></i>
+                                    </a>
+                                </button>
+                                <button class="w3-border-red w3-round-large w3-white">
+                                    <i class="bi bi-trash-fill  w3-text-red"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="w3-display-top" style="width:1200px;">
+                            <p>@course.Description</p>
+                        </td>
+                    </tr>
+                    
+                }
+            </table>
+        </div>
+    </div>
+
+</div>

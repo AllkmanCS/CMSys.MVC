@@ -1,0 +1,51 @@
+﻿@model List<TrainerGroupViewModel>
+
+@{
+    foreach (var trainerGroup in Model)
+    {
+        <div class="w3-container w3-margin">
+
+            <div class="w3-card-4">
+                <header class="w3-container w3-grey">
+                    <h3>@trainerGroup.Name</h3>
+                </header>
+                @foreach (var trainers in trainerGroup.TrainersInGroup)
+                {
+
+                    foreach (var trainer in trainers)
+                    {
+                        <div class="w3-cell">
+                        <button type="button" class="btn " data-bs-toggle="modal" data-bs-target="#trainers-@trainer.User.Id">
+                            @*<p class="text-primary"><b>@item.Trainer.User.FullName</b></p>*@
+                            <img src="@Url.Content($"~/img/{@trainer.User.FullName}.png")">
+                        </button>
+                        </div>
+
+
+                        <div class="modal fade" id="trainers-@trainer.User.Id" tabindex="-1" aria-labelledby="trainerName" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h2 class="modal-title" id="trainerName">@trainer.User.FullName</h2>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <img src="@Url.Content($"~/img/{@trainer.User.FullName}.png")">
+                                        </div>
+                                        <p>@trainer.Description</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    }
+                }
+            </div>
+        </div>
+    }
+}

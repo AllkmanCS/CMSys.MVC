@@ -1,0 +1,59 @@
+﻿@using CMSys.UI.ViewModels
+@model CoursesViewModel
+@{
+    ViewData["Title"] = "Courses Page";
+}
+<div class="container">
+<h3>Courses</h3>
+    <div class="d-inline-flex p-2"">
+        <div class="w3-bar w3-white w3-border w3-round">
+            @if (Model.CanPrevious)
+            {
+                <a href="/courses/?@Model.PreviousPageNumber" class="w3-button" >&laquo;</a>
+            }
+            @foreach (var item in Model.Pagination)
+            {
+                <a href="/courses/?@item" class="w3-button" onclick="location.href ='@Url.Action("Index", "Course")'">@item</a>
+            }
+                
+            @if (Model.CanNext)
+            {
+                <a href="/courses/?@Model.NextPageNumber" class="w3-button">&raquo</a>
+            }
+        </div>
+        <div>
+            <form asp-controller="Course" asp-action="Index">
+                <select asp-for="CourseViewModel.Id" asp-items="@Model.CourseTypes" class="w3-padding">
+                    <option>Select Course Type</option>
+                </select>
+                @*<input type="submit" value="Submit" />*@
+            </form>
+        </div>
+        <div>
+            <form asp-controller="Course" asp-action="Index">
+                <select asp-for="CourseViewModel.Id" asp-items="@Model.CourseGroups" class="w3-padding">
+                    <option>Select Course Group</option>
+                </select>
+                @*<input type="submit" value="Submit" />*@
+            </form>
+        </div>
+    </div>
+    <div>
+        <ul class="w3-ul">
+            @foreach (var course in Model.Items)
+            {
+                <li class="w3-white w3-margin-top w3-border w3-round">
+                    <h4>@course.Name</h4>
+                    <div class="w3-bar">
+                        <button class="w3-button w3-small w3-round-large w3-green">@course.CourseType.Name</button>
+                        <button class="w3-button w3-small w3-round-large w3-grey">@course.CourseGroup.Name</button>
+                    </div>
+                    <h5>@course.Description</h5>
+                    <a href="/courses/@course.Id" class="w3-text-blue">More info...</a>
+                </li>
+            }
+        </ul>
+    </div>
+
+</div>
+

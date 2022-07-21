@@ -1,0 +1,21 @@
+﻿<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+@using CMSys.UI.ViewModels
+@model LoginViewModel
+@{
+    ViewBag.Title = "Login";
+}
+@using (Html.BeginForm())
+{
+    
+<div class="w3-display-container">
+    <div class="w3-display-midle">
+
+        <form class="w3-container w3-card-4" action="/login" method="post" style="width:300px;">
+            <h2 class="w3-text-blue">Welcome!</h2>
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class="form-control", placeholder="Email"}})
+            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class="form-control", placeholder="Password"}})
+            <input type="submit" value="Login" class="w3-button" />
+        </form>
+    </div>
+</div>
+}
