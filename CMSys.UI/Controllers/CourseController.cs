@@ -101,7 +101,7 @@ namespace CMSys.UI.Controllers
         [Route("admin/courses/update/{id}")]
         public IActionResult Update(Guid? id)
         {
-            var course = _context.CourseRepository.All().FirstOrDefault(c => c.Id == id);
+            var course = _context.CourseRepository.Filter(c => c.Id == id).FirstOrDefault();
             var courseViewModel = new CourseViewModel();
             courseViewModel.CourseGroups = CourseGroups();
             courseViewModel.CourseTypes = CourseTypes();
@@ -121,7 +121,7 @@ namespace CMSys.UI.Controllers
         [Route("admin/courses/update/{id}")]
         public IActionResult Update(CourseViewModel courseViewModel, Guid? id)
         {
-            var course = _context.CourseRepository.All().FirstOrDefault(c => c.Id == id);
+            var course = _context.CourseRepository.Filter(c => c.Id == id).FirstOrDefault();
 
             if (course.Id == courseViewModel.Id)
             {
@@ -133,11 +133,12 @@ namespace CMSys.UI.Controllers
             return RedirectToAction("CourseCollection");
         }
         [Authorize]
+        [HttpGet]
         [Route("admin/courses/trainers/{id}")]
         public IActionResult Trainers(Guid id)
         {
             var courseViewModel = new CourseViewModel();
-            var course = _context.CourseRepository.All().FirstOrDefault(c => c.Id == id);
+            var course = _context.CourseRepository.Filter(c => c.Id == id).FirstOrDefault();
 
             var trainers = _context.TrainerRepository.All().ToList();
            // var trainersViewModel = new List<TrainerViewModel>();
@@ -181,25 +182,17 @@ namespace CMSys.UI.Controllers
             //var mappedCourse = _mapper.Map(mappedCourseTrainers, courseViewModel.Trainers);
             return RedirectToAction("Trainers");
         }
-        //[Authorize]
-        //[Route("admin/courses/trainers/{id}")]
-        //public IActionResult RemoveTrainer(Guid? id)
-        //{
-        //    var courseViewModel = new CourseViewModel();
-        //    var courseTrainers = _context.CourseTrainerRepository.All().Where(x => x.CourseId == id).ToList();
-        //    var mappedCourse = _mapper.Map(courseTrainers, courseViewModel.Trainers);
-        //    return View(mappedCourse);
-        //}
         [Authorize]
         [HttpGet]
         [Route("admin/courses/trainers/delete/{id}")]
         public IActionResult RemoveTrainer(Guid? id)
         {
-            _context.CourseTrainerRepository.Filter(x => x.TrainerId == id);
-            var course = _context.CourseTrainerRepository.All().FirstOrDefault(c => c.CourseId == id);
-
+            //sometimes it finds two same Trainer records with same id so I use FirstOrDaufault()
+            var courseTrainer = _context.CourseTrainerRepository.Filter(x => x.TrainerId == id).FirstOrDefault();
+            _context.CourseTrainerRepository.Remove(courseTrainer);
             _context.Commit();
-            return RedirectToAction("Trainers");
+            //
+            return Redirect($"/admin/courses/trainers/{courseTrainer.CourseId}");
         }
         private CoursesViewModel GetCoursesViewModel(int page, int perPage, string courseTypeName)
         {
