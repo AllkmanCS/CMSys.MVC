@@ -1,0 +1,33 @@
+﻿@model TrainerViewModel
+@{
+    ViewData["Title"] = "Create Trainer";
+}
+<div class="container">
+
+    <h1>Create Trainer</h1>
+    <div class="shadow p-3 mb-5 bg-white rounded">
+        <form method="post">
+            <div class="mb-3">
+            <label asp-for="User">User</label></br>
+            <select required asp-for="User.Id" asp-items="@Model.Users"  value="-- Select User --" class="w3-padding" ></br>
+            </select>
+            </div>
+            <div class="mb-3">
+            <label asp-for="TrainerGroup">Trainer Group</label></br>
+            <select required asp-for="TrainerGroup.Id" asp-items="@Model.TrainerGroupSelector" value="-- Select Trainer Group --" class="w3-padding" ></br>
+            </select>
+            </div>
+            <div class="mb-3">
+            <label asp-for="VisualOrder">Order</label></br>
+            <input required asp-for="VisualOrder" /></br>
+            </div>
+            <div class="mb-3">
+            <label asp-for="Description">Description</label></br>
+            <textarea asp-for="Description">Course description</textarea></br>
+            </div>
+            
+            <button type="submit" >Create</button>
+        </form>
+    </div>
+<a href="./" class="w3-text-blue w3-button">Back to list</a>
+</div>

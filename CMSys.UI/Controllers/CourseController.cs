@@ -128,7 +128,6 @@ namespace CMSys.UI.Controllers
                 var mappedCourse = _mapper.Map(courseViewModel, course);
                 course = mappedCourse;
                 _context.Commit();
-
             }
             return RedirectToAction("CourseCollection");
         }
@@ -141,8 +140,7 @@ namespace CMSys.UI.Controllers
             var course = _context.CourseRepository.Filter(c => c.Id == id).FirstOrDefault();
 
             var trainers = _context.TrainerRepository.All().ToList();
-           // var trainersViewModel = new List<TrainerViewModel>();
-           // var mappedTrainers = _mapper.Map(trainers, trainersViewModel);
+
             foreach (var trainer in trainers)
             {
                 courseViewModel.SelectionTrainers.Add(new SelectListItem(trainer.User.FullName, trainer.User.Id.ToString()));
@@ -175,17 +173,15 @@ namespace CMSys.UI.Controllers
             var courseTrainersViewModel = new List<CourseTrainerViewModel>();
             var mappedCourseTrainers = _mapper.Map(courseTrainers, courseTrainersViewModel); //view model now has all current course trainers.
 
-            //mappedCourseTrainers.Add(courseTrainerViewModel);
             var courseTrainer = _mapper.Map<CourseTrainer>(courseTrainerViewModel);
             _context.CourseTrainerRepository.Add(courseTrainer);
             _context.Commit();
-            //var mappedCourse = _mapper.Map(mappedCourseTrainers, courseViewModel.Trainers);
             return RedirectToAction("Trainers");
         }
         [Authorize]
         [HttpGet]
         [Route("admin/courses/trainers/delete/{id}")]
-        public IActionResult RemoveTrainer(Guid? id)
+        public IActionResult RemoveCourseTrainer(Guid? id)
         {
             //sometimes it finds two same Trainer records with same id so I use FirstOrDaufault()
             var courseTrainer = _context.CourseTrainerRepository.Filter(x => x.TrainerId == id).FirstOrDefault();
@@ -228,7 +224,8 @@ namespace CMSys.UI.Controllers
         }
         private ICollection<SelectListItem> CourseGroups()
         {
-            var courseGroups = _context.CourseGroupRepository.All().Select(ct => (ct.Name, ct.VisualOrder, ct.Id)).ToList();
+            var courseGroups = _context.CourseGroupRepository.All()
+                .Select(ct => (ct.Name, ct.VisualOrder, ct.Id)).ToList();
             var list = new List<SelectListItem>() { new SelectListItem() };
             foreach (var item in courseGroups)
             {

@@ -2,10 +2,17 @@
 @{
     ViewData["Title"] = "Trainer List";
 }
-<div class="w3-container">
-    <h1>Trainer</h1>
-    <div>
-        <table>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h1>Trainers</h1>
+        </div>
+        <div class="col-md-2 ms-auto">
+            <a class="btn btn-primary" asp-controller="Trainer" asp-action="TrainerForm">Create Trainer</a>
+        </div>
+    </div>
+    <div class="shadow p-3 mb-5 bg-white rounded">
+        <table class="table">
             <tr>
                 <th>Name</th>
                 <th>Group</th>
@@ -15,16 +22,23 @@
             @foreach (var trainer in Model)
             {
                 <tr>
-                    <td>@trainer.User.FullName</td>
-                    <td>@trainer.TrainerGroup.Name</td>
-                    <td>@trainer.VisualOrder</td>
                     <td>
-                        <div class="w3-cell-row">
-                            <button class="w3-border-yellow w3-round-large w3-white">
+                        <img src="@Url.Content($"~/img/{@trainer.User.FullName}.png")" style="width:10%;">
+                        <a href="/admin/trainers/@trainer.User.Id" style="text-decoration: none;">@trainer.User.FullName</a>
+                    </td>
+                    <td class="align-middle">@trainer.TrainerGroup.Name</td>
+                    <td class="align-middle">@trainer.VisualOrder</td>
+                    <td class="align-middle">
+                        <div>
+                            <a asp-controller="Trainer" asp-action="Update"
+                           asp-route-id="@trainer.Id"
+                           class="w3-border-yellow w3-round-large w3-white">
                                 <i class="bi bi-pencil-fill w3-text-yellow"></i>
-                            </button>
-                            <button class="w3-border-red w3-round-large w3-white">
-                                <i class="bi bi-trash-fill w3-text-red"></i>
+                            </a>
+                            <button class="w3-border-red w3-round-large bg-white">
+                                <a href="/admin/trainers/delete/@trainer.Id">
+                                    <i class="bi bi-trash-fill w3-text-red"></i>
+                                </a>
                             </button>
                         </div>
                     </td>
