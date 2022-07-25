@@ -1,39 +1,109 @@
-﻿@model List<CourseGroupViewModel>
+﻿@model CourseGroupsViewModel
 @{
-    ViewData["Title"] = "Courses Groups";
+    ViewData["Title"] = "Course Groups";
 
 }
-<div class="w3-container w3-white w3-margin">
-    <table>
-        <tr class="w3-border-bottom w3-margin" style="border-bottom:medium;">
+<div class="row">
+    <h1>Course Groups</h1>
+</div>
+<div class="col-md-2 ms-auto">
+    <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createGroup">Create Group</a>
+</div>
+
+
+<div class="modal fade" id="createGroup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="courseGroupName" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Group</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-controller="Course" asp-action="PostCourseGroup">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label asp-for="CourseGroup.Name">Name</label></br >
+                        <input asp-for="CourseGroup.Name" required /></br >
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="CourseGroup.VisualOrder">Order</label></br >
+                        <input asp-for="CourseGroup.VisualOrder" required /></br >
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="CourseGroup.Description">Description</label></br >
+                        <textarea asp-for="CourseGroup.Description">Course description</textarea></br >
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <table class="table">
+        <tr>
             <th>Name</th>
             <th>Description</th>
             <th>Order</th>
             <th>Action</th>
         </tr>
-        @foreach (var course in Model)
+        @foreach (var courseGroup in Model.CourseGroups)
         {
             <tr class="w3-border-bottom">
                 <td>
-                    <p>@course.Name</p>
+                    <p>@courseGroup.Name</p>
                 </td>
                 <td>
-                    <p>@course.Description</p>
+                    <p>@courseGroup.Description</p>
                 </td>
                 <td>
-                    <p>@course.VisualOrder</p>
+                    <p>@courseGroup.VisualOrder</p>
                 </td>
                 <td>
                     <div class="w3-cell-row">
                         <button class="w3-border-yellow w3-round-large w3-white">
-                            <i class="bi bi-pencil-fill w3-text-yellow"></i>
+                            <a class="btn" data-bs-toggle="modal" data-bs-target="#updateGroup-@courseGroup.Id">
+                                <i class="bi bi-pencil-fill w3-text-yellow"></i>
+                            </a>
                         </button>
-                        <button class="w3-border-red w3-round-large w3-white">
-                            <i class="bi bi-trash-fill w3-text-red"></i>
-                        </button>
-                    </div>
+                        <div class="modal fade" id="updateGroup-@courseGroup.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="courseGroupName" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h2 class="modal-title">Update Group</h2>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post" asp-controller="Course" asp-action="UpdateCourseGroup">
+                                        <input type="hidden" asp-for="@courseGroup.Id" value="@courseGroup.Id"/>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label asp-for="@courseGroup.Name">Name</label>
+                                                <input asp-for="@courseGroup.Name" required />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label asp-for="@courseGroup.VisualOrder">Order</label>
+                                                <input asp-for="@courseGroup.VisualOrder" required />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label asp-for="@courseGroup.Description">Description</label>
+                                                <textarea asp-for="@courseGroup.Description">Course description</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                            <button class="w3-border-red w3-round-large w3-white">
+                                <i class="bi bi-trash-fill w3-text-red"></i>
+                            </button>
+
                 </td>
             </tr>
         }
     </table>
-</div>

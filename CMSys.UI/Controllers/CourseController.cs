@@ -59,11 +59,12 @@ namespace CMSys.UI.Controllers
         }
         [Authorize]
         [Route("admin/coursegroups")]
-        public IActionResult CourseGroupsCollection(List<CourseGroupViewModel> courseGroupsViewModel)
+        public IActionResult CourseGroupsCollection(CourseGroupsViewModel courseGroupsViewModel)
         {
-            var courseGroups = _context.CourseGroupRepository.All();
-            var mappedCourseGroups = _mapper.Map(courseGroups, courseGroupsViewModel);
-            return View(mappedCourseGroups);
+            var courseGroups = _context.CourseGroupRepository.All().ToList();
+            var mappedCourseGroups = _mapper.Map(courseGroups, courseGroupsViewModel.CourseGroups);
+            courseGroupsViewModel.CourseGroups = mappedCourseGroups;
+            return View(courseGroupsViewModel);
         }
         [Authorize]
         [Route("admin/courses/create")]
@@ -189,6 +190,25 @@ namespace CMSys.UI.Controllers
             _context.Commit();
             //path to the url of the view (trainers update)
             return Redirect($"/admin/courses/trainers/{courseTrainer.CourseId}");
+        }
+        [Authorize]
+        public IActionResult PostCourseGroup(CourseGroupsViewModel courseGroupsViewModel)
+        {
+            var mappedCourseGroup = _mapper.Map<CourseGroup>(courseGroupsViewModel.CourseGroup);
+            _context.CourseGroupRepository.Add(mappedCourseGroup);
+            _context.Commit();
+            return RedirectToAction("CourseGroupsCollection");
+        }
+        [Authorize]
+        public IActionResult UpdateCourseGroup(CourseGroupsViewModel courseGroupsViewModel, Guid? id)
+        {
+            id = courseGroupsViewModel.CourseGroup.Id;
+            var courseGroup = _context.CourseGroupRepository.Find(x => x.Id == id);
+            
+            var mappedCourseGroup = _mapper.Map(courseGroupsViewModel.CourseGroup, courseGroup);
+            courseGroup = mappedCourseGroup;
+            _context.Commit();
+            return RedirectToAction("CourseGroupsCollection");
         }
         private CoursesViewModel GetCoursesViewModel(int page, int perPage, string courseTypeName)
         {

@@ -157,6 +157,8 @@ namespace CMSys.UI.Controllers
             _context.Commit();
             return RedirectToAction("TrainersCollection");
         }
+        [Authorize]
+        [HttpPost]
         private ICollection<SelectListItem> Users()
         {
             var users = _context.UserRepository.All()
