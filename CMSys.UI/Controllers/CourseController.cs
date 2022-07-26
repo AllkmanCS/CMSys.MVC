@@ -210,6 +210,17 @@ namespace CMSys.UI.Controllers
             _context.Commit();
             return RedirectToAction("CourseGroupsCollection");
         }
+        [Authorize]
+        [HttpGet]
+        [Route("admin/courses/coursegroups/delete/{id}")]
+
+        public IActionResult RemoveCourseGroup(Guid? id)
+        {
+            var courseGroup = _context.CourseGroupRepository.Find(x => x.Id == id);
+            _context.CourseGroupRepository.Remove(courseGroup);
+            _context.Commit();
+            return RedirectToAction("CourseGroupsCollection");
+        }
         private CoursesViewModel GetCoursesViewModel(int page, int perPage, string courseTypeName)
         {
             var coursesViewModel = new CoursesViewModel();
