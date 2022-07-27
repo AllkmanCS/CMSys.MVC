@@ -1,4 +1,4 @@
-﻿@model List<TrainerViewModel>
+﻿@model TrainersViewModel
 @{
     ViewData["Title"] = "Trainer List";
 }
@@ -19,7 +19,7 @@
                 <th>Order</th>
                 <th>Action</th>
             </tr>
-            @foreach (var trainer in Model)
+            @foreach (var trainer in Model.Trainers)
             {
                 <tr>
                     <td>

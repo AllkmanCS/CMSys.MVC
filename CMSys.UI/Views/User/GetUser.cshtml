@@ -1,0 +1,17 @@
+﻿@model UserViewModel
+@{
+    ViewData["Title"] = "User Page";
+}
+<div class="container">
+    <h1>@Model.FullName</h1>
+    <div class="card">
+            <img src="@Url.Content($"~/img/{@Model.FullName}.png")"/>
+        <div class="card-body">
+            <p>Department: @Model.Department</p>
+            <p>Location: @Model.Location</p>
+            <p>Position: @Model.Position</p>
+            <p>Start Date: @Model.StartDate</p>
+            @*<p>Roles: <p>@Model.rol</p></p>*@
+        </div>
+    </div>
+</div>

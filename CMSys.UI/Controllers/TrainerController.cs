@@ -21,44 +21,42 @@ namespace CMSys.UI.Controllers
         }
         [Authorize]
         [Route("trainers")]
-        public IActionResult Index(List<TrainerGroupViewModel> trainersGroupViewModel)
+        public IActionResult Index(TrainerGroupsViewModel trainerGroupsViewModel)
         {
             List<List<TrainerViewModel>> trainersInGroup = new List<List<TrainerViewModel>>();
-            List<TrainerViewModel> trainerViewModels = new List<TrainerViewModel>();
+            List<TrainerViewModel> trainersViewModel = new List<TrainerViewModel>();
 
             var trainers = _context.TrainerRepository.All().ToList();
             var trainerGroups = _context.TrainerGroupRepository.All().ToList();
 
-            var trainersGroupModel = _mapper.Map(trainerGroups, trainersGroupViewModel);
-            var trainersModel = _mapper.Map(trainers, trainerViewModels);
+            trainerGroupsViewModel.TrainerGroups = _mapper.Map(trainerGroups, trainerGroupsViewModel.TrainerGroups);
+            trainersViewModel = _mapper.Map(trainers, trainersViewModel);
 
-            foreach (var item in trainersGroupModel)
+            foreach (var item in trainerGroupsViewModel.TrainerGroups)
             {
-                var listOfTrainersInGroup = trainersModel
+                var listOfTrainersInGroup = trainersViewModel
                         .Where(y => y.TrainerGroupId == item.Id)
                         .GroupBy(x => x.VisualOrder)
                         .SelectMany(trainersModel => trainersModel).ToList();
                 item.TrainersInGroup.Add(listOfTrainersInGroup);
             }
-            return View(trainersGroupModel);
+            return View(trainerGroupsViewModel);
         }
         [Authorize]
         [Route("admin/trainers")]
-        public IActionResult TrainersCollection(List<TrainerViewModel> trainersViewModel)
+        public IActionResult TrainersCollection(TrainersViewModel trainersViewModel)
         {
             var trainers = _context.TrainerRepository.All().ToList();
-            var trainersModel = _mapper.Map(trainers, trainersViewModel);
-
-            return View(trainersModel);
+            trainersViewModel.Trainers = _mapper.Map(trainers, trainersViewModel.Trainers);
+            return View(trainersViewModel);
         }
         [Authorize]
         [Route("admin/trainergroups")]
-        public IActionResult TrainerGroupsCollection(List<TrainerGroupViewModel> trainerGroupsViewModel)
+        public IActionResult TrainerGroupsCollection(TrainerGroupsViewModel trainerGroupsViewModel)
         {
             var trainerGroups = _context.TrainerGroupRepository.All().ToList();
-            var trainerGroupsModel = _mapper.Map(trainerGroups, trainerGroupsViewModel);
-
-            return View(trainerGroupsModel);
+            trainerGroupsViewModel.TrainerGroups = _mapper.Map(trainerGroups, trainerGroupsViewModel.TrainerGroups);
+            return View(trainerGroupsViewModel);
         }
         [Authorize]
         [Route("admin/trainers/create")]
@@ -76,7 +74,6 @@ namespace CMSys.UI.Controllers
         [Route("admin/trainers/create")]
         public IActionResult CreateTrainer([FromForm] TrainerViewModel trainerViewModel)
         {
-            var userViewModel = new UserViewModel();
             trainerViewModel.Users = Users();
             trainerViewModel.TrainerGroupSelector = TrainerGroup();
             if (trainerViewModel == null)
@@ -86,23 +83,47 @@ namespace CMSys.UI.Controllers
             var selectedUserId = trainerViewModel.User.Id;
 
             var user = _context.UserRepository.Find(x => x.Id == selectedUserId);
-            var mappedUser = _mapper.Map(user, userViewModel);
+
             trainerViewModel.Id = selectedUserId;
-            trainerViewModel.User = mappedUser;
             trainerViewModel.TrainerGroupId = trainerViewModel.TrainerGroup.Id;
-            var trainerPhoto = _context.UserRepository.Find(x => x.Id == selectedUserId)
-                .Photo;
+
+            var trainerPhoto = _context.UserRepository.Find(x => x.Id == selectedUserId).Photo;
             var filePath = $"../CMSys.UI/wwwroot/img/{trainerViewModel.User.FullName}.png";
             using (var ms = new MemoryStream(trainerPhoto))
             {
                 FileWriter.WriteBytesToFile(filePath, trainerPhoto);
             }
             var mappedTrainer = _mapper.Map<Trainer>(trainerViewModel);
-
             _context.TrainerRepository.Add(mappedTrainer);
 
             _context.Commit();
             return RedirectToAction("TrainersCollection");
+        }
+        [Authorize]
+        public IActionResult CreateTrainerGroup([FromForm] TrainerGroupsViewModel trainerGroupsViewModel)
+        {
+            var mappedTrainerGroup = _mapper.Map<TrainerGroup>(trainerGroupsViewModel.TrainerGroup);
+            _context.TrainerGroupRepository.Add(mappedTrainerGroup);
+            _context.Commit();
+            return RedirectToAction("TrainerGroupsCollection");
+        }
+        [Authorize]
+        public IActionResult UpdateTrainerGroup(TrainerGroupsViewModel trainerGroupsViewModel)
+        {
+            var trainerGroup = _context.TrainerGroupRepository.Find(x => x.Id == trainerGroupsViewModel.TrainerGroup.Id);
+            trainerGroup = _mapper.Map(trainerGroupsViewModel.TrainerGroup, trainerGroup);
+            _context.Commit();
+            return RedirectToAction("TrainerGroupsCollection");
+        }
+        [Authorize]
+        [HttpGet]
+        [Route("admin/trainergroups/delete/{id}")]
+        public IActionResult RemoveTrainerGroup(Guid? id)
+        {
+            var trainerGroup = _context.TrainerGroupRepository.Find(x => x.Id == id);
+            _context.TrainerGroupRepository.Remove(trainerGroup);
+            _context.Commit();
+            return RedirectToAction("TrainerGroupsCollection");
         }
         [Authorize]
         [Route("admin/trainers/update/{id}")]
@@ -126,24 +147,14 @@ namespace CMSys.UI.Controllers
         [Authorize]
         [HttpPost]
         [Route("admin/trainers/update/{id}")]
-        public IActionResult Update(TrainerViewModel trainerViewModel, Guid? id)
+        public IActionResult Update(TrainerViewModel trainerViewModel)
         {
-            var trainer = _context.TrainerRepository.Filter(t => t.Id == id).FirstOrDefault();
+            var trainer = _context.TrainerRepository.Filter(t => t.Id == trainerViewModel.Id).FirstOrDefault();
             trainerViewModel.TrainerGroupSelector = TrainerGroup();
-
             trainerViewModel.TrainerGroupId = trainerViewModel.TrainerGroup.Id;
-
-
-            //var users = _context.UserRepository.Filter(x => x.Id == id).ToList();
-            //var trainerGroup = _context.TrainerGroupRepository.Filter(x => x.Id == id).FirstOrDefault();
-
-            //var selectedTrainerGroup = trainerViewModel.TrainerGroupId;
-            if (trainer.Id == trainerViewModel.Id)
-            {
-                var mappedTrainer = _mapper.Map(trainerViewModel, trainer);
-                trainer = mappedTrainer;
-                _context.Commit();
-            }
+            var mappedTrainer = _mapper.Map(trainerViewModel, trainer);
+            trainer = mappedTrainer;
+            _context.Commit();
 
             return RedirectToAction("TrainersCollection");
         }
@@ -157,8 +168,6 @@ namespace CMSys.UI.Controllers
             _context.Commit();
             return RedirectToAction("TrainersCollection");
         }
-        [Authorize]
-        [HttpPost]
         private ICollection<SelectListItem> Users()
         {
             var users = _context.UserRepository.All()

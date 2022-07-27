@@ -79,19 +79,20 @@
                                 <button class="w3-border-blue w3-round-large w3-white">
                                     <i class="bi bi-info w3-text-blue"></i>
                                 </button>
-                                <a asp-controller="Course" asp-action="Update" 
-                                asp-route-id="@course.Id"
+                                <a  href="/admin/courses/update/@course.Id" 
                                 class="w3-border-yellow w3-round-large w3-white">
                                     <i class="bi bi-pencil-fill w3-text-yellow"></i>
                                 </a>
                                 <button class="w3-border-yellow w3-round-large w3-white">
-                                    <a asp-controller="Course" asp-action="Trainers"
+                                    <a asp-controller="Course" asp-action="CourseTrainers"
                                     asp-route-id="@course.Id">
                                     <i class="bi bi-people-fill  w3-text-yellow"></i>
                                     </a>
                                 </button>
                                 <button class="w3-border-red w3-round-large w3-white">
-                                    <i class="bi bi-trash-fill  w3-text-red"></i>
+                                    <a href="/admin/courses/delete/@course.Id">
+                                        <i class="bi bi-trash-fill  w3-text-red"></i>
+                                    </a>
                                 </button>
                             </div>
                         </td>

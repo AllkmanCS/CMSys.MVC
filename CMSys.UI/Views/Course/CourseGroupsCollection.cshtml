@@ -3,13 +3,13 @@
     ViewData["Title"] = "Course Groups";
 
 }
+<div class="container">
 <div class="row">
     <h1>Course Groups</h1>
 </div>
 <div class="col-md-2 ms-auto">
     <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createGroup">Create Group</a>
 </div>
-
 
 <div class="modal fade" id="createGroup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="courseGroupName" aria-hidden="true">
     <div class="modal-dialog">
@@ -30,7 +30,7 @@
                     </div>
                     <div class="mb-3">
                         <label asp-for="CourseGroup.Description">Description</label></br >
-                        <textarea asp-for="CourseGroup.Description">Course description</textarea></br >
+                        <textarea asp-for="CourseGroup.Description">Course Group description</textarea></br >
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -42,7 +42,7 @@
     </div>
 </div>
 <div class="container">
-    <table class="table">
+    <table class="table bg-white shadow">
         <tr>
             <th>Name</th>
             <th>Description</th>
@@ -52,15 +52,9 @@
         @foreach (var courseGroup in Model.CourseGroups)
         {
             <tr class="w3-border-bottom">
-                <td>
-                    <p>@courseGroup.Name</p>
-                </td>
-                <td>
-                    <p>@courseGroup.Description</p>
-                </td>
-                <td>
-                    <p>@courseGroup.VisualOrder</p>
-                </td>
+                <td><p>@courseGroup.Name</p></td>
+                <td><p>@courseGroup.Description</p></td>
+                <td><p>@courseGroup.VisualOrder</p></td>
                 <td>
                     <div class="w3-cell-row">
                         <button class="w3-border-yellow w3-round-large w3-white">
@@ -68,7 +62,13 @@
                                 <i class="bi bi-pencil-fill w3-text-yellow"></i>
                             </a>
                         </button>
-                        <div class="modal fade" id="updateGroup-@courseGroup.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="courseGroupName" aria-hidden="true">
+                        <div class="modal fade" 
+                            id="updateGroup-@courseGroup.Id" 
+                            data-bs-backdrop="static" 
+                            data-bs-keyboard="false" 
+                            tabindex="-1" 
+                            aria-labelledby="courseGroupName" 
+                            aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -88,7 +88,7 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label asp-for="@courseGroup.Description">Description</label>
-                                                <textarea asp-for="@courseGroup.Description">Course description</textarea>
+                                                <textarea asp-for="@courseGroup.Description">Course Group description</textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -100,7 +100,7 @@
                             </div>
                         </div>
                             <button class="w3-border-red w3-round-large w3-white">
-                                <a href="/admin/courses/coursegroups/delete/@courseGroup.Id">
+                                <a href="/admin/coursegroups/delete/@courseGroup.Id">
                                 <i class="bi bi-trash-fill w3-text-red"></i>
                                 </a>
                             </button>
@@ -109,3 +109,4 @@
             </tr>
         }
     </table>
+</div>

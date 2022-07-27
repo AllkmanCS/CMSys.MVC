@@ -6,9 +6,8 @@
 <div class="container">
     <h1>Update Course</h1>
     <div class="shadow p-3 mb-5 bg-white rounded">
-        <form method="post">
+        <form method="post" asp-action="UpdateForm">
             <input type="hidden" asp-for="Id"/>
-            <DataAnnotationsValidator />
             <div class="mb-3">
             <label asp-for="Name">Name</label></br>
             <input asp-for="Name" required/><br />

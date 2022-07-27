@@ -53,25 +53,26 @@ namespace CMSys.UI.Controllers
                 var trainerPhoto = item.Trainer.User.Photo;
                 var filePath = $"../CMSys.UI/wwwroot/img/{item.Trainer.User.FullName}.png";
                 using (var ms = new MemoryStream(trainerPhoto))
-                FileWriter.WriteBytesToFile(filePath, trainerPhoto);
+                    FileWriter.WriteBytesToFile(filePath, trainerPhoto);
             }
-                return View(mappedCourse);
+            return View(mappedCourse);
         }
         [Authorize]
         [Route("admin/coursegroups")]
-        public IActionResult CourseGroupsCollection(CourseGroupsViewModel courseGroupsViewModel)
+        public IActionResult CourseGroupsCollection()
         {
             var courseGroups = _context.CourseGroupRepository.All().ToList();
-            var mappedCourseGroups = _mapper.Map(courseGroups, courseGroupsViewModel.CourseGroups);
-            courseGroupsViewModel.CourseGroups = mappedCourseGroups;
-            return View(courseGroupsViewModel);
+            return View(new CourseGroupsViewModel()
+            {
+                CourseGroups = _mapper.Map<List<CourseGroupViewModel>>(courseGroups)
+            });
         }
         [Authorize]
         [Route("admin/courses/create")]
         [HttpGet]
-        public IActionResult CourseForm(CourseViewModel courseViewModel)
+        public IActionResult CourseForm()
         {
-            courseViewModel = new CourseViewModel();
+            var courseViewModel = new CourseViewModel();
 
             courseViewModel.CourseTypes = CourseTypes();
             courseViewModel.CourseGroups = CourseGroups();
@@ -80,7 +81,7 @@ namespace CMSys.UI.Controllers
         [Authorize]
         [HttpPost]
         [Route("admin/courses/create")]
-        public IActionResult CreateCourse([FromForm]CourseViewModel courseViewModel)
+        public IActionResult CreateCourse([FromForm] CourseViewModel courseViewModel)
         {
             courseViewModel.CourseTypes = CourseTypes();
             courseViewModel.CourseGroups = CourseGroups();
@@ -91,93 +92,97 @@ namespace CMSys.UI.Controllers
             }
 
             var mappedCourse = _mapper.Map<Course>(courseViewModel);
-
             _context.CourseRepository.Add(mappedCourse);
-           
             _context.Commit();
 
             return RedirectToAction("CourseCollection");
         }
         [Authorize]
         [Route("admin/courses/update/{id}")]
-        public IActionResult Update(Guid? id)
+        public IActionResult UpdateForm(CourseViewModel courseViewModel)
         {
-            var course = _context.CourseRepository.Filter(c => c.Id == id).FirstOrDefault();
-            var courseViewModel = new CourseViewModel();
-            courseViewModel.CourseGroups = CourseGroups();
-            courseViewModel.CourseTypes = CourseTypes();
-            if (id == null)
+            if (courseViewModel.Id == null)
             {
                 return BadRequest();
             }
-            var mappedCourse = _mapper.Map(course, courseViewModel);
-            if (mappedCourse == null)
-            {
-                return NotFound();
-            }
-            return View(mappedCourse);
+            var course = _context.CourseRepository.Filter(c => c.Id == courseViewModel.Id).FirstOrDefault();
+            courseViewModel.CourseGroups = CourseGroups();
+            courseViewModel.CourseTypes = CourseTypes();
+            courseViewModel = _mapper.Map(course, courseViewModel);
+
+            return View(courseViewModel);
         }
         [Authorize]
         [HttpPost]
         [Route("admin/courses/update/{id}")]
-        public IActionResult Update(CourseViewModel courseViewModel, Guid? id)
+        public IActionResult Update(CourseViewModel courseViewModel)
+        {
+            var course = _context.CourseRepository.Filter(c => c.Id == courseViewModel.Id).FirstOrDefault();
+            course = _mapper.Map(courseViewModel, course);
+            _context.Commit();
+
+            return RedirectToAction("CourseCollection");
+        }
+        [Authorize]
+        [HttpGet]
+        [Route("admin/courses/delete/{id}")]
+        public IActionResult RemoveCourse(Guid? id)
         {
             var course = _context.CourseRepository.Filter(c => c.Id == id).FirstOrDefault();
-
-            if (course.Id == courseViewModel.Id)
-            {
-                var mappedCourse = _mapper.Map(courseViewModel, course);
-                course = mappedCourse;
-                _context.Commit();
-            }
+            _context.CourseRepository.Remove(course);
+            _context.Commit();
             return RedirectToAction("CourseCollection");
         }
         [Authorize]
         [HttpGet]
         [Route("admin/courses/trainers/{id}")]
-        public IActionResult Trainers(Guid id)
+        public IActionResult CourseTrainers(Guid id)
         {
             var courseViewModel = new CourseViewModel();
             var course = _context.CourseRepository.Filter(c => c.Id == id).FirstOrDefault();
-
             var trainers = _context.TrainerRepository.All().ToList();
+            var courseTrainers = _context.CourseTrainerRepository.All().Where(x => x.CourseId == id).ToList();
 
             foreach (var trainer in trainers)
             {
-                courseViewModel.SelectionTrainers.Add(new SelectListItem(trainer.User.FullName, trainer.User.Id.ToString()));
+                //if course has trainer selected it will not appear in <Select> and re-appear once i remove trainer from course
+                if (!courseTrainers.Any(x => x.TrainerId == trainer.Id))
+                {
+                    courseViewModel.SelectionTrainers.Add(new SelectListItem(trainer.User.FullName, trainer.User.Id.ToString()));
+                }
             }
-            var mappedCourse = _mapper.Map(course, courseViewModel);
+            courseViewModel = _mapper.Map(course, courseViewModel);
+            courseViewModel.Trainers = _mapper.Map(courseTrainers, courseViewModel.Trainers);
 
-            var courseTrainers = _context.CourseTrainerRepository.All().Where(x => x.CourseId == id).ToList();
-            var mappedCourseTrainers = _mapper.Map(courseTrainers, mappedCourse.Trainers);
-            mappedCourse.Trainers = mappedCourseTrainers;
-            return View(mappedCourse);
+            return View(courseViewModel);
         }
         [Authorize]
         [HttpPost]
         [Route("admin/courses/trainers/{id}")]
-        public IActionResult Trainers(CourseViewModel courseViewModel, Guid? id)
+        public IActionResult CourseTrainers(CourseViewModel courseViewModel)
         {
             var trainers = _context.TrainerRepository.All().ToList();
             var trainersViewModel = new List<TrainerViewModel>();
-            var mappedTrainers = _mapper.Map(trainers, trainersViewModel);
+            trainersViewModel = _mapper.Map(trainers, trainersViewModel);
+
             var selectedTrainerId = courseViewModel.Trainer.User.Id;
 
             var courseTrainerViewModel = new CourseTrainerViewModel();
-            var courseTrainers = _context.CourseTrainerRepository.All().Where(x => x.CourseId == id).ToList();
+            var courseTrainers = _context.CourseTrainerRepository.All().Where(x => x.CourseId == courseViewModel.Id).ToList();
 
             courseTrainerViewModel.Trainer = trainersViewModel
                 .Where(x => x.User.Id == selectedTrainerId).FirstOrDefault();
-            courseTrainerViewModel.CourseId = id;
+
+            courseTrainerViewModel.CourseId = courseViewModel.Id;
             courseTrainerViewModel.TrainerId = selectedTrainerId;
 
             var courseTrainersViewModel = new List<CourseTrainerViewModel>();
-            var mappedCourseTrainers = _mapper.Map(courseTrainers, courseTrainersViewModel); //view model now has all current course trainers.
-
+            courseTrainersViewModel = _mapper.Map(courseTrainers, courseTrainersViewModel); //view model now has all current course trainers.
+            //getting courseTrainer props from viewModel and mapping them, then adding them into db entity coureTrainer
             var courseTrainer = _mapper.Map<CourseTrainer>(courseTrainerViewModel);
             _context.CourseTrainerRepository.Add(courseTrainer);
             _context.Commit();
-            return RedirectToAction("Trainers");
+            return RedirectToAction("CourseTrainers");
         }
         [Authorize]
         [HttpGet]
@@ -200,20 +205,16 @@ namespace CMSys.UI.Controllers
             return RedirectToAction("CourseGroupsCollection");
         }
         [Authorize]
-        public IActionResult UpdateCourseGroup(CourseGroupsViewModel courseGroupsViewModel, Guid? id)
+        public IActionResult UpdateCourseGroup(CourseGroupsViewModel courseGroupsViewModel)
         {
-            id = courseGroupsViewModel.CourseGroup.Id;
-            var courseGroup = _context.CourseGroupRepository.Find(x => x.Id == id);
-            
-            var mappedCourseGroup = _mapper.Map(courseGroupsViewModel.CourseGroup, courseGroup);
-            courseGroup = mappedCourseGroup;
+            var courseGroup = _context.CourseGroupRepository.Find(x => x.Id == courseGroupsViewModel.CourseGroup.Id);
+            courseGroup = _mapper.Map(courseGroupsViewModel.CourseGroup, courseGroup);
             _context.Commit();
             return RedirectToAction("CourseGroupsCollection");
         }
         [Authorize]
         [HttpGet]
-        [Route("admin/courses/coursegroups/delete/{id}")]
-
+        [Route("admin/coursegroups/delete/{id}")]
         public IActionResult RemoveCourseGroup(Guid? id)
         {
             var courseGroup = _context.CourseGroupRepository.Find(x => x.Id == id);
@@ -231,7 +232,7 @@ namespace CMSys.UI.Controllers
               c => string.IsNullOrEmpty(courseTypeName) ? true : c.CourseType.Name == courseTypeName);
             var mappedCourses = _mapper.Map(pagedList, coursesViewModel);
             //pagination
-            
+
             for (int i = 1; i < pagedList.TotalPages; i++)
             {
                 if (pagedList.IsNearFromPageOrBoundary(i))
@@ -261,7 +262,7 @@ namespace CMSys.UI.Controllers
             foreach (var item in courseGroups)
             {
                 list.Add(new SelectListItem(item.Name, item.Id.ToString()));
-                
+
             }
             return list;
         }

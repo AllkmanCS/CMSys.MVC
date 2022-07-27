@@ -34,6 +34,7 @@ namespace CMSys.UI.ViewModels
             set => _pagination = value;
         }
         public List<UserViewModel> Items { get; set; } = new List<UserViewModel>();
+        public UserViewModel User { get; set; }
 
     }
 }

@@ -15,6 +15,7 @@ namespace CMSys.UI.ViewModels
         public string Location { get; private set; }
         public byte[] Photo { get; private set; }
         public string FullName => $"{FirstName} {LastName}";
+        public List<Role> Roles { get; set; }
 
 
     }

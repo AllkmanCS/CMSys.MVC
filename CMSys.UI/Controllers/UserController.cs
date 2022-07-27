@@ -14,11 +14,11 @@ using CMSys.Common.Paging;
 
 namespace CMSys.UI.Controllers
 {
-    public class AccountController : Controller
+    public class UserController : Controller
     {
         private IUnitOfWork _context;
         private IMapper _mapper;
-        public AccountController(IUnitOfWork context, IMapper mapper)
+        public UserController(IUnitOfWork context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -76,6 +76,29 @@ namespace CMSys.UI.Controllers
             }
 
             return View(mappedUsers);
+        }
+        [Authorize]
+        [HttpGet]
+        [Route("admin/users/{id}")]
+        public IActionResult GetUser(Guid id)
+        {
+            var userViewModel = new UserViewModel();
+            var user = _context.UserRepository.Find(x => x.Id == id);
+
+           // var userRoles = _context.RoleRepository.Filter(x => x.)
+
+            var mappedUser = _mapper.Map(user, userViewModel);
+            return View(mappedUser);
+        }
+        [Authorize]
+        public IActionResult UpdateUser(UsersViewModel usersViewModel, Guid? id)
+        {
+            id = usersViewModel.User.Id;
+            var user = _context.UserRepository.Find(x => x.Id == id);
+            var mappedUser = _mapper.Map(usersViewModel.User, user);
+            user = mappedUser;
+            _context.Commit();
+            return RedirectToAction("IndexUsers");
         }
     }
 }

@@ -13,7 +13,7 @@ namespace CMSys.UI.Automapper
             CreateMap<Trainer, UserViewModel>().ReverseMap();
             CreateMap<TrainerViewModel, UserViewModel>().ReverseMap();
 
-            CreateMap<TrainerGroup, TrainerGroupViewModel>();
+            CreateMap<TrainerGroup, TrainerGroupViewModel>().ReverseMap();
             CreateMap<TrainerViewModel, UserViewModel>().ReverseMap();
             CreateMap<User, UserViewModel>().ReverseMap();
         }

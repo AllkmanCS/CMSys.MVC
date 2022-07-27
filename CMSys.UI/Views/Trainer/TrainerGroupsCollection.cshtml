@@ -1,23 +1,55 @@
-﻿@model List<TrainerGroupViewModel>
+﻿@model TrainerGroupsViewModel
 @{
     ViewData["Title"] = "Trainer Groups";
 }
 <div class="container">
     <div class="row">
-    <h1>Trainer Groups</h1>
+        <h1>Trainer Groups</h1>
     </div>
-    <div class="col-md-2 ms-auto">
-        <a class="btn btn-primary" asp-controller="Trainer" asp-action="CreateGroup">Create Group</a>
+    <div class="col-md-2 ms-auto p-2">
+        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createGroup">Create Group</a>
     </div>
-    <div>
-        <table class="table">
+
+    <div class="modal fade" id="createGroup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="trainerGroupName" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Create Group</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" asp-controller="Trainer" asp-action="CreateTrainerGroup">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label asp-for="TrainerGroup.Name">Name</label></br >
+                            <input asp-for="TrainerGroup.Name" required /></br >
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="TrainerGroup.VisualOrder">Order</label></br >
+                            <input asp-for="TrainerGroup.VisualOrder" required /></br >
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="TrainerGroup.Description">Description</label></br >
+                            <textarea asp-for="TrainerGroup.Description">Trainer Group description</textarea></br >
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <table class="table bg-white shadow">
             <tr>
                 <th>Name</th>
-                <th>Group</th>
+                <th>Description</th>
                 <th>Order</th>
                 <th>Action</th>
             </tr>
-            @foreach (var trainerGroup in Model)
+            @foreach (var trainerGroup in Model.TrainerGroups)
             {
                 <tr>
                     <td>@trainerGroup.Name</td>
@@ -26,10 +58,51 @@
                     <td>
                         <div class="w3-cell-row">
                             <button class="w3-border-yellow w3-round-large w3-white">
-                                <i class="bi bi-pencil-fill w3-text-yellow"></i>
+                                <a class="btn" data-bs-toggle="modal" data-bs-target="#updateGroup-@trainerGroup.Id">
+                                    <i class="bi bi-pencil-fill w3-text-yellow"></i>
+                                </a>
                             </button>
+                            <div class="modal fade" 
+                                id="updateGroup-@trainerGroup.Id" 
+                                data-bs-backdrop="static" 
+                                data-bs-keyboard="false" 
+                                tabindex="-1" 
+                                aria-labelledby="trainerGroupName" 
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h2 class="modal-title">Update Group</h2>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form method="post" asp-controller="Trainer" asp-action="UpdateTrainerGroup">
+                                            <input type="hidden" asp-for="@trainerGroup.Id" value="@trainerGroup.Id" />
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label asp-for="@trainerGroup.Name">Name</label>
+                                                    <input asp-for="@trainerGroup.Name" required />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label asp-for="@trainerGroup.VisualOrder">Order</label>
+                                                    <input asp-for="@trainerGroup.VisualOrder" required />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label asp-for="@trainerGroup.Description">Description</label>
+                                                    <textarea asp-for="@trainerGroup.Description">Trainer Group description</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                             <button class="w3-border-red w3-round-large w3-white">
-                                <i class="bi bi-trash-fill w3-text-red"></i>
+                                <a href="/admin/trainergroups/delete/@trainerGroup.Id">
+                                    <i class="bi bi-trash-fill w3-text-red"></i>
+                                </a>
                             </button>
                         </div>
                     </td>

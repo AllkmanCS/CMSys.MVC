@@ -1,11 +1,11 @@
-﻿@model List<TrainerGroupViewModel>
+﻿@model TrainerGroupsViewModel
 @{
     ViewData["Title"] = "Trainers";
 }
 
 <div class="container">
     <h1>Trainers</h1>
-    @foreach (var trainerGroup in Model)
+    @foreach (var trainerGroup in Model.TrainerGroups)
     {
 
         <div class="card">
