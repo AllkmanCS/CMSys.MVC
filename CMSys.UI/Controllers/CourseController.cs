@@ -72,11 +72,11 @@ namespace CMSys.UI.Controllers
         [HttpGet]
         public IActionResult CourseForm()
         {
-            var courseViewModel = new CourseViewModel();
-
-            courseViewModel.CourseTypes = CourseTypes();
-            courseViewModel.CourseGroups = CourseGroups();
-            return View(courseViewModel);
+            return View(new CourseViewModel()
+            {
+                CourseTypes = CourseTypes(),
+                CourseGroups = CourseGroups()
+            }) ;
         }
         [Authorize]
         [HttpPost]
@@ -101,10 +101,6 @@ namespace CMSys.UI.Controllers
         [Route("admin/courses/update/{id}")]
         public IActionResult UpdateForm(CourseViewModel courseViewModel)
         {
-            if (courseViewModel.Id == null)
-            {
-                return BadRequest();
-            }
             var course = _context.CourseRepository.Filter(c => c.Id == courseViewModel.Id).FirstOrDefault();
             courseViewModel.CourseGroups = CourseGroups();
             courseViewModel.CourseTypes = CourseTypes();
@@ -199,8 +195,8 @@ namespace CMSys.UI.Controllers
         [Authorize]
         public IActionResult PostCourseGroup(CourseGroupsViewModel courseGroupsViewModel)
         {
-            var mappedCourseGroup = _mapper.Map<CourseGroup>(courseGroupsViewModel.CourseGroup);
-            _context.CourseGroupRepository.Add(mappedCourseGroup);
+            var courseGroup = _mapper.Map<CourseGroup>(courseGroupsViewModel.CourseGroup);
+            _context.CourseGroupRepository.Add(courseGroup);
             _context.Commit();
             return RedirectToAction("CourseGroupsCollection");
         }
