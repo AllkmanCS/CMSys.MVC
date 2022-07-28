@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using CMSys.UI.ViewModels;
 using CMSys.Common.Paging;
+using CMSys.UI.Helpers;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CMSys.UI.Controllers
 {
@@ -73,6 +75,9 @@ namespace CMSys.UI.Controllers
             foreach (var item in mappedUsers.Items)
             {
                 users.Add(item);
+                var filePath = $"../CMSys.UI/wwwroot/img/{item.FullName}.png";
+                using (var ms = new MemoryStream(item.Photo))
+                    FileWriter.WriteBytesToFile(filePath, item.Photo);
             }
 
             return View(mappedUsers);
@@ -84,21 +89,29 @@ namespace CMSys.UI.Controllers
         {
             var userViewModel = new UserViewModel();
             var user = _context.UserRepository.Find(x => x.Id == id);
-
-           // var userRoles = _context.RoleRepository.Filter(x => x.)
+            // var userRoles = _context.RoleRepository.Filter(x => x.)
 
             var mappedUser = _mapper.Map(user, userViewModel);
             return View(mappedUser);
         }
         [Authorize]
-        public IActionResult UpdateUser(UsersViewModel usersViewModel, Guid? id)
+        [Route("admin/users/update/{id}")]
+        public IActionResult UpdateUserForm(UserViewModel userViewModel)
         {
-            id = usersViewModel.User.Id;
-            var user = _context.UserRepository.Find(x => x.Id == id);
-            var mappedUser = _mapper.Map(usersViewModel.User, user);
-            user = mappedUser;
+            var user = _context.UserRepository.Find(x => x.Id == userViewModel.Id);
+            userViewModel = _mapper.Map(user, userViewModel);
+            var roles = _context.RoleRepository.All().ToList();
+
+            foreach (var role in roles)
+            {
+                if (!userViewModel.Roles.Any(x => x.Id == role.Id))
+                {
+                    userViewModel.RolesSelection.Add(new SelectListItem(role.Name, role.Id.ToString()));
+                }
+            }
+
             _context.Commit();
-            return RedirectToAction("IndexUsers");
+            return View(userViewModel);
         }
     }
 }

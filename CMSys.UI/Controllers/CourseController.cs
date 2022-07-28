@@ -50,10 +50,9 @@ namespace CMSys.UI.Controllers
             var mappedCourse = _mapper.Map<CourseViewModel>(course);
             foreach (var item in mappedCourse.Trainers)
             {
-                var trainerPhoto = item.Trainer.User.Photo;
                 var filePath = $"../CMSys.UI/wwwroot/img/{item.Trainer.User.FullName}.png";
-                using (var ms = new MemoryStream(trainerPhoto))
-                    FileWriter.WriteBytesToFile(filePath, trainerPhoto);
+                using (var ms = new MemoryStream(item.Trainer.User.Photo))
+                    FileWriter.WriteBytesToFile(filePath, item.Trainer.User.Photo);
             }
             return View(mappedCourse);
         }
@@ -138,6 +137,7 @@ namespace CMSys.UI.Controllers
             var course = _context.CourseRepository.Filter(c => c.Id == id).FirstOrDefault();
             var trainers = _context.TrainerRepository.All().ToList();
             var courseTrainers = _context.CourseTrainerRepository.All().Where(x => x.CourseId == id).ToList();
+            courseViewModel = _mapper.Map(course, courseViewModel);
 
             foreach (var trainer in trainers)
             {
@@ -147,7 +147,6 @@ namespace CMSys.UI.Controllers
                     courseViewModel.SelectionTrainers.Add(new SelectListItem(trainer.User.FullName, trainer.User.Id.ToString()));
                 }
             }
-            courseViewModel = _mapper.Map(course, courseViewModel);
             courseViewModel.Trainers = _mapper.Map(courseTrainers, courseViewModel.Trainers);
 
             return View(courseViewModel);

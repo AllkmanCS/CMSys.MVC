@@ -61,9 +61,9 @@ namespace CMSys.UI.Controllers
         [Authorize]
         [Route("admin/trainers/create")]
         [HttpGet]
-        public IActionResult TrainerForm(TrainerViewModel trainerViewModel)
+        public IActionResult TrainerForm()
         {
-            trainerViewModel = new TrainerViewModel();
+            var trainerViewModel = new TrainerViewModel();
 
             trainerViewModel.Users = Users();
             trainerViewModel.TrainerGroupSelector = TrainerGroup();
