@@ -1,5 +1,4 @@
-﻿using CMSys.Core.Entities.Membership;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CMSys.UI.ViewModels
 {
@@ -16,9 +15,9 @@ namespace CMSys.UI.ViewModels
         public string Location { get; set; }
         public byte[] Photo { get; set; }
         public string FullName => $"{FirstName} {LastName}";
-        public List<Role> Roles { get; set; }
+        public List<RoleViewModel> Roles { get; set; } = new List<RoleViewModel>();
+        public RoleViewModel Role { get; set; }
+        public List<UserRoleViewModel> UserRoles { get; set; }
         public ICollection<SelectListItem> RolesSelection { get; set; } = new List<SelectListItem>();
-
-
     }
 }

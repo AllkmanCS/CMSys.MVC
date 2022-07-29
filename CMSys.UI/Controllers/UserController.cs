@@ -100,6 +100,9 @@ namespace CMSys.UI.Controllers
         {
             var user = _context.UserRepository.Find(x => x.Id == userViewModel.Id);
             userViewModel = _mapper.Map(user, userViewModel);
+
+
+
             var roles = _context.RoleRepository.All().ToList();
 
             foreach (var role in roles)
@@ -110,8 +113,33 @@ namespace CMSys.UI.Controllers
                 }
             }
 
-            _context.Commit();
             return View(userViewModel);
+        }
+        [Authorize]
+        [HttpPost]
+        [Route("admin/users/update/{id}")]
+        public IActionResult UpdateUser(UserViewModel userViewModel)
+        {
+            var user = _context.UserRepository.Find(x => x.Id == userViewModel.Id);
+            var roles = _context.RoleRepository.All().ToList();
+            var rolesViewModel = new List<RoleViewModel>();
+            rolesViewModel = _mapper.Map(roles, rolesViewModel);
+
+            var selectedRoleId = userViewModel.Role.Id;
+            var userRoleViewModel = new UserRoleViewModel();
+            var role = roles.Where(x => x.Id == selectedRoleId).FirstOrDefault();
+            var roleViewModel = new RoleViewModel();
+            roleViewModel = _mapper.Map(role, roleViewModel);
+
+            userRoleViewModel.UserId = (Guid)userViewModel.Id;
+            userRoleViewModel.RoleId = (Guid)userViewModel.Role.Id;
+
+            user = _mapper.Map(userViewModel, user);
+
+            _context.Commit();
+
+
+            return RedirectToAction("UpdateUserForm");
         }
     }
 }

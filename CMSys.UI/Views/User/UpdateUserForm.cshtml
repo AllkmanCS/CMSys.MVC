@@ -61,12 +61,15 @@
                         }
                         <tr>
                             <td>
-                                <div class="card-body input-group mb-3">
-                                    <select asp-for="@Model.Id" asp-items="@Model.RolesSelection" class="w3-padding">
-                                        <option>-- Select Trainer --</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-primary">Add</button>
-                                </div>
+                                <form asp-controller="User" asp-action="UpdateUserForm">
+                                    <div class="card-body input-group mb-3">
+
+                                        <select asp-for="@Model.Role.Id" asp-items="@Model.RolesSelection" class="w3-padding">
+                                            <option>-- Select Role --</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-primary">Add</button>
+                                    </div>
+                                </form>
                             </td>
                         </tr>
                     </tbody>
