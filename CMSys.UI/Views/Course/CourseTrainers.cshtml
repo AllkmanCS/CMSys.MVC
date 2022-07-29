@@ -2,12 +2,12 @@
 @{
     ViewData["Title"] = "Course Trainers";
 }
-<div class="container-fluid">
+<div class="container">
     <h1>Update trainers for @Model.Name</h1>
     <div class="row">
         <div class="col-6">
-            <div class="card">
-                <form asp-controller="Course" asp-action="Trainers">
+            <di class="card">
+                <form asp-controller="Course" asp-action="CourseTrainers">
                     <div class="card-header text-info"><b>Add Trainer</b></div>
                     <div class="card-body input-group mb-3">
                         <select asp-for="Trainer.User.Id" asp-items="@Model.SelectionTrainers" class="w3-padding">
@@ -15,15 +15,12 @@
                         </select>
                         <button type="submit" class="btn btn-primary">Add</button>
                     </div>
-
                 </form>
-
-            </div>
-
         </div>
+
         <div class="col-6">
             <div class="card">
-                <div class="card-header text-info"><b>Edit Trainers</b></div>
+                <div class="card-header text-info"><b>Edit Course Trainers</b></div>
                 <table class="table">
                     <thead>
                         <tr>
@@ -33,9 +30,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                            @foreach (var trainer in Model.Trainers)
-                            {
-                        <tr>
+                        @foreach (var trainer in Model.Trainers)
+                        {
+                            <tr>
                                 <td>
                                     @trainer.Trainer.User.FullName
                                 </td>
@@ -43,22 +40,21 @@
                                     <input value="@trainer.Trainer.VisualOrder" />
                                 </td>
                                 <td>
-                                    @*<form asp-controller="Course" asp-action="RemoveTrainer">*@
 
-                                    <button class="w3-border-yellow w3-round-large w3-white">
+                                    <button class="w3-border-red w3-round-large w3-white">
                                         <a href="/admin/courses/trainers/delete/@trainer.TrainerId">
                                             <i class="bi bi-trash-fill  w3-text-red"></i>
                                         </a>
                                     </button>
-                                    @*</form>*@
                                 </td>
-                        </tr>
-                            }
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+<a href="../" class="w3-text-blue w3-button">Back to list</a>
 </div>
-<a href="./" class="w3-text-blue w3-button">Back to list</a>
+</div>
 </div>

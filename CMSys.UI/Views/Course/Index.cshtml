@@ -5,7 +5,7 @@
 }
 <div class="container">
 <h3>Courses</h3>
-    <div class="d-inline-flex p-2"">
+    <div class="d-inline-flex p-2">
         <div class="w3-bar w3-white w3-border w3-round">
             @if (Model.CanPrevious)
             {
@@ -45,10 +45,10 @@
                 <li class="w3-white w3-margin-top w3-border w3-round">
                     <h4>@course.Name</h4>
                     <div class="w3-bar">
-                        <button class="w3-button w3-small w3-round-large w3-green">@course.CourseType.Name</button>
-                        <button class="w3-button w3-small w3-round-large w3-grey">@course.CourseGroup.Name</button>
+                        <button class="btn btn-info">@course.CourseGroup.Name</button>
+                        <button class="btn btn-secondary">@course.CourseType.Name</button>
                     </div>
-                    <h5>@course.Description</h5>
+                    <p>@course.Description</p>
                     <a href="/courses/@course.Id" class="w3-text-blue">More info...</a>
                 </li>
             }

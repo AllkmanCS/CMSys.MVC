@@ -14,7 +14,8 @@ namespace CMSys.UI.Automapper
             CreateMap<Course, CourseViewModel>()
                 .ReverseMap();
             CreateMap<CourseTrainer, CourseViewModel>().ReverseMap();
-            CreateMap<CourseGroup, CourseGroupViewModel>();
+            CreateMap<CourseGroup, CourseGroupViewModel>().ReverseMap();
+
             CreateMap<CourseType, CourseTypeViewModel>();
             CreateMap<CourseTrainer, CourseTrainerViewModel>().ReverseMap();
             CreateMap<TrainerViewModel, CourseTrainerViewModel>().ReverseMap();

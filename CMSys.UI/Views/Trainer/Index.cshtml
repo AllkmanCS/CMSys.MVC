@@ -1,51 +1,53 @@
-﻿@model List<TrainerGroupViewModel>
-
+﻿@model TrainerGroupsViewModel
 @{
-    foreach (var trainerGroup in Model)
+    ViewData["Title"] = "Trainers";
+}
+
+<div class="container">
+    <h1>Trainers</h1>
+    @foreach (var trainerGroup in Model.TrainerGroups)
     {
-        <div class="w3-container w3-margin">
 
-            <div class="w3-card-4">
-                <header class="w3-container w3-grey">
-                    <h3>@trainerGroup.Name</h3>
-                </header>
-                @foreach (var trainers in trainerGroup.TrainersInGroup)
+        <div class="card">
+            <div class="card-header">
+                <p class="text-primary"><b>@trainerGroup.Name</b></p>
+            </div>
+            @foreach (var trainers in trainerGroup.TrainersInGroup)
+            {
+
+                foreach (var trainer in trainers)
                 {
+                    <div class="d-inline">
+                        <img src="@Url.Content($"~/img/{@trainer.User.FullName}.png")">
+                        <p class="text-primary"><b>@trainer.User.FullName</b></p>
+                        <button type="submit" class="btn border-0" data-bs-toggle="modal" data-bs-target="#trainers-@trainer.User.Id">
+                            <i class="bi bi-info w3-text-white bg-primary"></i>
 
-                    foreach (var trainer in trainers)
-                    {
-                        <div class="w3-cell">
-                        <button type="button" class="btn " data-bs-toggle="modal" data-bs-target="#trainers-@trainer.User.Id">
-                            @*<p class="text-primary"><b>@item.Trainer.User.FullName</b></p>*@
-                            <img src="@Url.Content($"~/img/{@trainer.User.FullName}.png")">
                         </button>
-                        </div>
+                    </div>
 
-
-                        <div class="modal fade" id="trainers-@trainer.User.Id" tabindex="-1" aria-labelledby="trainerName" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h2 class="modal-title" id="trainerName">@trainer.User.FullName</h2>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal fade" id="trainers-@trainer.User.Id" tabindex="-1" aria-labelledby="trainerName" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2 class="modal-title" id="trainerName">@trainer.User.FullName</h2>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div>
+                                        <img src="@Url.Content($"~/img/{@trainer.User.FullName}.png")">
                                     </div>
-                                    <div class="modal-body">
-                                        <div>
-                                            <img src="@Url.Content($"~/img/{@trainer.User.FullName}.png")">
-                                        </div>
-                                        <p>@trainer.Description</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
+                                    <p>@trainer.Description</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
-
-
-                    }
+                    </div>
                 }
-            </div>
+            }
         </div>
     }
-}
+</div>
+

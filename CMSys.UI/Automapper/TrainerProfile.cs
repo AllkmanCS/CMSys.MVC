@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CMSys.Core.Entities.Catalog;
+using CMSys.Core.Entities.Membership;
 using CMSys.UI.ViewModels;
 
 namespace CMSys.UI.Automapper
@@ -8,8 +9,13 @@ namespace CMSys.UI.Automapper
     {
         public TrainerProfile()
         {
-            CreateMap<Trainer, TrainerViewModel>();
-            CreateMap<TrainerGroup, TrainerGroupViewModel>();
+            CreateMap<Trainer, TrainerViewModel>().ReverseMap();
+            CreateMap<Trainer, UserViewModel>().ReverseMap();
+            CreateMap<TrainerViewModel, UserViewModel>().ReverseMap();
+
+            CreateMap<TrainerGroup, TrainerGroupViewModel>().ReverseMap();
+            CreateMap<TrainerViewModel, UserViewModel>().ReverseMap();
+            CreateMap<User, UserViewModel>().ReverseMap();
         }
     }
 }

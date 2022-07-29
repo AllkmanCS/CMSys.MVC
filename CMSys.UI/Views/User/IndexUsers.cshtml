@@ -24,7 +24,7 @@
         </div>
     </div>
     <div>
-        <table>
+        <table class="table bg-white shadow">
             <tr class="w3-border-bottom w3-margin" style="border-bottom:medium;">
                 <th>Name</th>
                 <th>Department</th>
@@ -36,19 +36,24 @@
             @foreach (var user in Model.Items)
             {
                 <tr>
-                    <td>@user.FullName</td>
-                    <td>@user.Department</td>
-                    <td>@user.Position</td>
-                    <td>@user.Location</td>
-                    <td>@user.EndDate</td>
                     <td>
-                        <div class="w3-cell-row">
-                            <button class="w3-border-blue w3-round-large w3-white">
-                                <i class="bi bi-info w3-text-blue"></i>
-                            </button>
-                            <button class="w3-border-yellow w3-round-large w3-white">
+                        <img src="@Url.Content($"~/img/{@user.FullName}.png")" style="width:10%;"/>
+                        <a href="/admin/users/@user.Id"  style="text-decoration: none;">@user.FullName</a>
+                    </td>
+                    <td class="align-middle">@user.Department</td>
+                    <td class="align-middle">@user.Position</td>
+                    <td class="align-middle">@user.Location</td>
+                    <td class="align-middle">@user.EndDate</td>
+                    <td class="align-middle">
+                        <div>
+                                <a asp-controller="User" asp-action="Getuser">
+                                    <i class="bi bi-info w3-text-red"></i>
+                                </a>
+                            <a asp-controller="User" asp-action="UpdateUserForm"
+                           asp-route-id="@user.Id"
+                           class="w3-border-yellow w3-round-large w3-white">
                                 <i class="bi bi-pencil-fill w3-text-yellow"></i>
-                            </button>
+                            </a>
                         </div>
                     </td>
                 </tr>
