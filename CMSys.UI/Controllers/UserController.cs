@@ -62,7 +62,7 @@ namespace CMSys.UI.Controllers
 
             var pagedList = _context.UserRepository.GetPagedList(new PageInfo(page, perPage), fullName,
               u => string.IsNullOrEmpty(fullName) ? true : u.FullName == fullName);
-            var mappedUsers = _mapper.Map(pagedList, usersViewModel);
+            usersViewModel = _mapper.Map(pagedList, usersViewModel);
             //pagination
             for (int i = 1; i < pagedList.TotalPages; i++)
             {
@@ -72,7 +72,7 @@ namespace CMSys.UI.Controllers
                 }
             }
             var users = new List<UserViewModel>();
-            foreach (var item in mappedUsers.Items)
+            foreach (var item in usersViewModel.Items)
             {
                 users.Add(item);
                 var filePath = $"../CMSys.UI/wwwroot/img/{item.FullName}.png";
@@ -80,7 +80,7 @@ namespace CMSys.UI.Controllers
                     FileWriter.WriteBytesToFile(filePath, item.Photo);
             }
 
-            return View(mappedUsers);
+            return View(usersViewModel);
         }
         [Authorize]
         [HttpGet]
@@ -99,11 +99,8 @@ namespace CMSys.UI.Controllers
         public IActionResult UpdateUserForm(UserViewModel userViewModel)
         {
             var user = _context.UserRepository.Find(x => x.Id == userViewModel.Id);
-            userViewModel = _mapper.Map(user, userViewModel);
-
-
-
             var roles = _context.RoleRepository.All().ToList();
+            userViewModel = _mapper.Map(user, userViewModel);
 
             foreach (var role in roles)
             {
@@ -118,28 +115,64 @@ namespace CMSys.UI.Controllers
         [Authorize]
         [HttpPost]
         [Route("admin/users/update/{id}")]
-        public IActionResult UpdateUser(UserViewModel userViewModel)
+        public IActionResult UpdateRole(UserViewModel userViewModel)
         {
             var user = _context.UserRepository.Find(x => x.Id == userViewModel.Id);
-            var roles = _context.RoleRepository.All().ToList();
-            var rolesViewModel = new List<RoleViewModel>();
-            rolesViewModel = _mapper.Map(roles, rolesViewModel);
+            //mapping to get role.Name in the view
+            userViewModel = _mapper.Map(user, userViewModel);
+            
+            var role = _context.RoleRepository.Filter(x => x.Id == userViewModel.Role.Id).FirstOrDefault();
 
-            var selectedRoleId = userViewModel.Role.Id;
-            var userRoleViewModel = new UserRoleViewModel();
-            var role = roles.Where(x => x.Id == selectedRoleId).FirstOrDefault();
-            var roleViewModel = new RoleViewModel();
-            roleViewModel = _mapper.Map(role, roleViewModel);
-
-            userRoleViewModel.UserId = (Guid)userViewModel.Id;
-            userRoleViewModel.RoleId = (Guid)userViewModel.Role.Id;
-
-            user = _mapper.Map(userViewModel, user);
-
+            user.AddRole(role);
             _context.Commit();
+            return Redirect($"/admin/users/update/{userViewModel.Id}");
+        }
+        [Authorize]
+        [HttpGet]
+        [Route("admin/users/update/removerole/{id}/{roleid}")]
+        public IActionResult RemoveRole(UserViewModel userViewModel, Guid roleId)
+        {
+            var user = _context.UserRepository.Find(x => x.Id == userViewModel.Id);
+            var role = _context.RoleRepository.Find(x => x.Id == roleId);
+            user.RemoveRole(role);
+            _context.Commit();
+            return Redirect($"/admin/users/update/{userViewModel.Id}");
+        }
+        [Authorize]
+        [Route("admin/users/update/changepassword")]
+        public IActionResult ChangePassword(UserViewModel userViewModel)
+        {
+            var user = _context.UserRepository.Find(x => x.Id == userViewModel.Id);
+            var newPassword = userViewModel.PasswordInput;
+            var newPasswordVerify = userViewModel.PasswordInput;
 
+            if (newPassword == newPasswordVerify)
+            {
+                user.ChangePassword(newPasswordVerify);
+            }
 
-            return RedirectToAction("UpdateUserForm");
+            return Redirect($"/admin/users/update/{userViewModel.Id}");
+        }
+        [Authorize]
+        [Route("admin/users/{searchText}")]
+        public IActionResult SearchUser(string searchText)
+        {
+            var query = _context.UserRepository.All().AsQueryable();
+            if (!String.IsNullOrEmpty(searchText))
+            {
+                string[] collection = searchText.Split(' ', ',');
+                foreach (var item in collection)
+                {
+                    query = query.Where(x =>
+                    x.FirstName.Contains(item)
+                    || x.LastName.Contains(item));
+                }
+            }
+            var result = query.ToList();
+            
+            var usersViewModel = new UsersViewModel();
+            usersViewModel.Items = _mapper.Map(result, usersViewModel.Items);
+            return View(usersViewModel);
         }
     }
 }

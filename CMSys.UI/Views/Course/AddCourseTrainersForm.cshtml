@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-6">
             <di class="card">
-                <form asp-controller="Course" asp-action="CourseTrainers">
+                <form asp-controller="Course" asp-action="AddCourseTrainersForm">
                     <div class="card-header text-info"><b>Add Trainer</b></div>
                     <div class="card-body input-group mb-3">
                         <select asp-for="Trainer.User.Id" asp-items="@Model.SelectionTrainers" class="w3-padding">

@@ -3,7 +3,7 @@
     public class RoleViewModel
     {
         public Guid Id { get; set; }
-        public string Name { get; }
+        public string Name { get; set; }
         public ICollection<UserViewModel> Users { get; set; }
 
     }

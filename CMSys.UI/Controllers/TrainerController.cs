@@ -74,27 +74,18 @@ namespace CMSys.UI.Controllers
         [Route("admin/trainers/create")]
         public IActionResult CreateTrainer([FromForm] TrainerViewModel trainerViewModel)
         {
-            trainerViewModel.Users = Users();
-            trainerViewModel.TrainerGroupSelector = TrainerGroup();
-            if (trainerViewModel == null)
-            {
-                return BadRequest("Trainer object is null.");
-            }
-            var selectedUserId = trainerViewModel.User.Id;
+            var user = _context.UserRepository.Find(x => x.Id == trainerViewModel.Id);
 
-            var user = _context.UserRepository.Find(x => x.Id == selectedUserId);
-
-            trainerViewModel.Id = selectedUserId;
-            trainerViewModel.TrainerGroupId = trainerViewModel.TrainerGroup.Id;
-
-            var trainerPhoto = _context.UserRepository.Find(x => x.Id == selectedUserId).Photo;
+            var trainerPhoto = _context.UserRepository.Find(x => x.Id == trainerViewModel.Id).Photo;
             var filePath = $"../CMSys.UI/wwwroot/img/{trainerViewModel.User.FullName}.png";
             using (var ms = new MemoryStream(trainerPhoto))
             {
                 FileWriter.WriteBytesToFile(filePath, trainerPhoto);
             }
-            var mappedTrainer = _mapper.Map<Trainer>(trainerViewModel);
-            _context.TrainerRepository.Add(mappedTrainer);
+
+            var trainer = _mapper.Map<Trainer>(trainerViewModel);
+           
+            _context.TrainerRepository.Add(trainer);
 
             _context.Commit();
             return RedirectToAction("TrainersCollection");
@@ -151,7 +142,6 @@ namespace CMSys.UI.Controllers
         {
             var trainer = _context.TrainerRepository.Filter(t => t.Id == trainerViewModel.Id).FirstOrDefault();
             trainerViewModel.TrainerGroupSelector = TrainerGroup();
-            trainerViewModel.TrainerGroupId = trainerViewModel.TrainerGroup.Id;
             var mappedTrainer = _mapper.Map(trainerViewModel, trainer);
             trainer = mappedTrainer;
             _context.Commit();

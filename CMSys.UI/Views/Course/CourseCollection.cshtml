@@ -4,10 +4,12 @@
     ViewData["Title"] = "Courses Page";
 }
 <div class="container">
-    <div class="d-inline-flex p-2">
+    <div class="row">
+        <div class="d-inline-flex p-2">
+            <h3>Courses</h3>
+            <a class="btn btn-primary" asp-controller="Course" asp-action="CourseForm">Create Course</a>
+        </div>
 
-    <h3>Courses</h3>
-    <a class="btn btn-primary" asp-controller="Course" asp-action="CourseForm">Create Course</a>
     </div>
     <div class="w3-show-inline-block w3-border w3-round">
         <div class="w3-bar w3-white w3-border w3-round">
@@ -64,13 +66,13 @@
                             </div>
                         </td>
                         <td rowspan="2">
-                            <ul >
+                            <ul>
                                 @foreach (var trainer in course.Trainers)
                                 {
-                                <li class="w3-text-blue-gray" style=" list-style-type:none;">
-                                    @trainer.Trainer.User.FullName
-                                </li>
-                                    
+                                    <li class="w3-text-blue-gray" style=" list-style-type:none;">
+                                        @trainer.Trainer.User.FullName
+                                    </li>
+
                                 }
                             </ul>
                         </td>
@@ -79,14 +81,14 @@
                                 <button class="w3-border-blue w3-round-large w3-white">
                                     <i class="bi bi-info w3-text-blue"></i>
                                 </button>
-                                <a  href="/admin/courses/update/@course.Id" 
-                                class="w3-border-yellow w3-round-large w3-white">
+                                <a href="/admin/courses/update/@course.Id"
+                               class="w3-border-yellow w3-round-large w3-white">
                                     <i class="bi bi-pencil-fill w3-text-yellow"></i>
                                 </a>
                                 <button class="w3-border-yellow w3-round-large w3-white">
-                                    <a asp-controller="Course" asp-action="CourseTrainers"
-                                    asp-route-id="@course.Id">
-                                    <i class="bi bi-people-fill  w3-text-yellow"></i>
+                                    <a asp-controller="Course" asp-action="AddCourseTrainers"
+                                   asp-route-id="@course.Id">
+                                        <i class="bi bi-people-fill  w3-text-yellow"></i>
                                     </a>
                                 </button>
                                 <button class="w3-border-red w3-round-large w3-white">
@@ -102,7 +104,7 @@
                             <p>@course.Description</p>
                         </td>
                     </tr>
-                    
+
                 }
             </table>
         </div>

@@ -1,6 +1,6 @@
 ﻿@model UsersViewModel
 @{
-    ViewData["Title"] = "Users";
+    ViewData["Title"] = "Filtered Users";
 }
 <div class="container">
     <h3>Users</h3>
@@ -24,9 +24,9 @@
                 </div>
             </div>
             <div class="col input-group">
-                <form  method="get" asp-controller="User" asp-action="SearchUsers" >
-                <input type="text" placeholder="Search for..." />
-                <button type="submit" class="btn btn-primary" >
+                <form  method="get">
+                <input type="text" placeholder="Search for..." name="SearchString" />
+                <button type="submit" class="btn btn-primary" asp-controller="User" asp-action="SearchUser" >
                     <i class="bi bi-search"></i>
                     </button>
                 </form>

@@ -21,11 +21,34 @@ namespace CMSys.UI.Controllers
             _context = context;
             _mapper = mapper;
         }
+        [HttpGet]
         [Route("courses")]
         public IActionResult Index(int page, int perPage, string courseTypeName)
         {
             CoursesViewModel courses = GetCoursesViewModel(page, perPage, courseTypeName);
             return View(courses);
+        }
+        private CoursesViewModel GetCoursesViewModel(int page, int perPage, string courseTypeName)
+        {
+            var coursesViewModel = new CoursesViewModel();
+            page = coursesViewModel.Page;
+            perPage = coursesViewModel.PerPage;
+
+            var pagedList = _context.CourseRepository.GetPagedList(new PageInfo(page, perPage),
+              c => string.IsNullOrEmpty(courseTypeName) ? true : c.CourseType.Name == courseTypeName);
+            var mappedCourses = _mapper.Map(pagedList, coursesViewModel);
+            //pagination
+
+            for (int i = 1; i < pagedList.TotalPages; i++)
+            {
+                if (pagedList.IsNearFromPageOrBoundary(i))
+                {
+                    coursesViewModel.Pagination.Add(i);
+                }
+            }
+            coursesViewModel.CourseTypes = CourseTypes();
+            coursesViewModel.CourseGroups = CourseGroups();
+            return mappedCourses;
         }
         [Authorize]
         [Route("admin/courses")]
@@ -131,12 +154,12 @@ namespace CMSys.UI.Controllers
         [Authorize]
         [HttpGet]
         [Route("admin/courses/trainers/{id}")]
-        public IActionResult CourseTrainers(Guid id)
+        public IActionResult AddCourseTrainersForm(Guid id)
         {
             var courseViewModel = new CourseViewModel();
             var course = _context.CourseRepository.Filter(c => c.Id == id).FirstOrDefault();
             var trainers = _context.TrainerRepository.All().ToList();
-            var courseTrainers = _context.CourseTrainerRepository.All().Where(x => x.CourseId == id).ToList();
+            var courseTrainers = _context.CourseTrainerRepository.Filter(x => x.CourseId == id).ToList();
             courseViewModel = _mapper.Map(course, courseViewModel);
 
             foreach (var trainer in trainers)
@@ -154,7 +177,7 @@ namespace CMSys.UI.Controllers
         [Authorize]
         [HttpPost]
         [Route("admin/courses/trainers/{id}")]
-        public IActionResult CourseTrainers(CourseViewModel courseViewModel)
+        public IActionResult AddCourseTrainers(CourseViewModel courseViewModel)
         {
             var trainers = _context.TrainerRepository.All().ToList();
             var trainersViewModel = new List<TrainerViewModel>();
@@ -177,7 +200,7 @@ namespace CMSys.UI.Controllers
             var courseTrainer = _mapper.Map<CourseTrainer>(courseTrainerViewModel);
             _context.CourseTrainerRepository.Add(courseTrainer);
             _context.Commit();
-            return RedirectToAction("CourseTrainers");
+            return RedirectToAction("AddCourseTrainers");
         }
         [Authorize]
         [HttpGet]
@@ -216,28 +239,6 @@ namespace CMSys.UI.Controllers
             _context.CourseGroupRepository.Remove(courseGroup);
             _context.Commit();
             return RedirectToAction("CourseGroupsCollection");
-        }
-        private CoursesViewModel GetCoursesViewModel(int page, int perPage, string courseTypeName)
-        {
-            var coursesViewModel = new CoursesViewModel();
-            page = coursesViewModel.Page;
-            perPage = coursesViewModel.PerPage;
-
-            var pagedList = _context.CourseRepository.GetPagedList(new PageInfo(page, perPage),
-              c => string.IsNullOrEmpty(courseTypeName) ? true : c.CourseType.Name == courseTypeName);
-            var mappedCourses = _mapper.Map(pagedList, coursesViewModel);
-            //pagination
-
-            for (int i = 1; i < pagedList.TotalPages; i++)
-            {
-                if (pagedList.IsNearFromPageOrBoundary(i))
-                {
-                    coursesViewModel.Pagination.Add(i);
-                }
-            }
-            coursesViewModel.CourseTypes = CourseTypes();
-            coursesViewModel.CourseGroups = CourseGroups();
-            return mappedCourses;
         }
         private ICollection<SelectListItem> CourseTypes()
         {

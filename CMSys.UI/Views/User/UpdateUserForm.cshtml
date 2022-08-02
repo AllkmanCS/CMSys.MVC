@@ -11,17 +11,17 @@
                     <p class="mb-0 text-primary"><b>Change Password</b></p>
                 </div>
                 <div class="card-body">
-                    <form class="form" role="form" autocomplete="off">
+                    <form class="form" role="form" asp-controller="User" asp-action="ChangePassword" autocomplete="off">
                         <div class="form-group">
                             <label for="inputPasswordNew">New Password</label>
-                            <input type="password" class="form-control" id="inputPasswordNew" required="">
+                            <input type="password" class="form-control" id="inputPasswordNew" asp-for="PasswordInput" required="">
                             <span class="form-text small text-muted">
                                 The password must be 8-20 characters, and must <em>not</em> contain spaces.
                             </span>
                         </div>
                         <div class="form-group">
                             <label for="inputPasswordNewVerify">Repeat Password</label>
-                            <input type="password" class="form-control" id="inputPasswordNewVerify" required="">
+                            <input type="password" class="form-control" id="inputPasswordNewVerify" asp-for="PasswordInput" required="">
                             <span class="form-text small text-muted">
                                 To confirm, type the new password again.
                             </span>
@@ -46,14 +46,16 @@
                         </tr>
                     </thead>
                     <tbody>
+                        
                         @foreach (var userRole in Model.Roles)
                         {
                             <tr>
                                 <td>
-                                    @userRole.Name
+                                    <p>@userRole.Name</p>
                                 </td>
                                 <td>
-                                    <a href="/admin/users/update/delete/@userRole.Id" class="w3-border-red w3-round-large w3-white">
+                                    <a href="/admin/users/update/removerole/@Model.Id/@userRole.Id"
+                                    class="w3-border-red w3-round-large w3-white">
                                         <i class="bi bi-trash-fill  w3-text-red"></i>
                                     </a>
                                 </td>
@@ -64,7 +66,8 @@
                                 <form asp-controller="User" asp-action="UpdateUserForm">
                                     <div class="card-body input-group mb-3">
 
-                                        <select asp-for="@Model.Role.Id" asp-items="@Model.RolesSelection" class="w3-padding">
+                                        <select asp-for="@Model.Role.Id" 
+                                        asp-items="@Model.RolesSelection" class="w3-padding">
                                             <option>-- Select Role --</option>
                                         </select>
                                         <button type="submit" class="btn btn-primary">Add</button>

@@ -6,9 +6,9 @@ namespace CMSys.UI.ViewModels
     {
         public const int DescriptionLength = 4000;
 
-        public Guid? Id { get; set; }
+        public Guid? Id => User == null ? null : User.Id; 
         public int VisualOrder { get; set; }
-        public Guid TrainerGroupId { get; set; }
+        public Guid? TrainerGroupId  => TrainerGroup == null ? null : TrainerGroup.Id;
         public string Description { get; set; }
 
         public UserViewModel User { get; set; }

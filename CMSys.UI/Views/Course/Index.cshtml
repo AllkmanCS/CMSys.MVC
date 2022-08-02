@@ -9,16 +9,16 @@
         <div class="w3-bar w3-white w3-border w3-round">
             @if (Model.CanPrevious)
             {
-                <a href="/courses/?@Model.PreviousPageNumber" class="w3-button" >&laquo;</a>
+                <a href="/courses/@Model.PreviousPageNumber" class="w3-button" >&laquo;</a>
             }
             @foreach (var item in Model.Pagination)
             {
-                <a href="/courses/?@item" class="w3-button" onclick="location.href ='@Url.Action("Index", "Course")'">@item</a>
+                <a href="/courses/@item" class="w3-button" onclick="location.href ='@Url.Action("Index", "Course")'">@item</a>
             }
                 
             @if (Model.CanNext)
             {
-                <a href="/courses/?@Model.NextPageNumber" class="w3-button">&raquo</a>
+                <a href="/courses/@Model.NextPageNumber" class="w3-button">&raquo</a>
             }
         </div>
         <div>
@@ -26,7 +26,6 @@
                 <select asp-for="CourseViewModel.Id" asp-items="@Model.CourseTypes" class="w3-padding">
                     <option>Select Course Type</option>
                 </select>
-                @*<input type="submit" value="Submit" />*@
             </form>
         </div>
         <div>
@@ -34,7 +33,6 @@
                 <select asp-for="CourseViewModel.Id" asp-items="@Model.CourseGroups" class="w3-padding">
                     <option>Select Course Group</option>
                 </select>
-                @*<input type="submit" value="Submit" />*@
             </form>
         </div>
     </div>

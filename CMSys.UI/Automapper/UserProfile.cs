@@ -9,10 +9,9 @@ namespace CMSys.UI.Automapper
     {
         public UserProfile()
         {
-            CreateMap<User, UserViewModel>();
+            CreateMap<User, UserViewModel>().ReverseMap();
             CreateMap<PagedList<User>, UsersViewModel>();
             CreateMap<Role, RoleViewModel>().ReverseMap();
-            CreateMap<UserRole, UserRoleViewModel>().ReverseMap();
         }
     }
 }
